@@ -99,6 +99,3 @@ This project aims to create a robotic hand that mimics human hand gestures detec
 
 ---
 
-## Contributors
-- [Your Name](https://github.com/your-github)
-
