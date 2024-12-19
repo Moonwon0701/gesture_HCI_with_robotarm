@@ -9,8 +9,6 @@ import numpy as np
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 
-r = 3  # 모터 회전자의 반지름 (cm)
-
 FINGER_BASES = [4, 8, 12, 16, 20]
 WRIST = 0
 
