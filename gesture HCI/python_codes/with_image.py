@@ -5,6 +5,7 @@ import serial
 import serial.tools.list_ports
 from PIL import Image
 import numpy as np
+import time
 
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
@@ -91,6 +92,7 @@ cap = cv2.VideoCapture(0)
 
 with mp_hands.Hands(min_detection_confidence=0.7, min_tracking_confidence=0.7, max_num_hands=1) as hands:
     while cap.isOpened():
+        start_time = time.time()
         ret, frame = cap.read()
         if not ret:
             print("Error: Unable to capture video.")
@@ -125,7 +127,8 @@ with mp_hands.Hands(min_detection_confidence=0.7, min_tracking_confidence=0.7, m
 
                 angles = get_servo_angles(distances=outputs)
                 print(angles)
-                py_serial.write(("090" + "".join(f"{math.floor(angle):03d}" for angle in angles) + "\n").encode('ascii'))
+                if frame_count % 100 == 0 and py_serial:
+                    py_serial.write(("090" + "".join(f"{math.floor(angle):03d}" for angle in angles) + "\n").encode('ascii'))
 
         # PNG 이미지를 프레임 최상단에 합성
         overlay_image(frame, ui_image, position=(0, 0))
@@ -134,6 +137,11 @@ with mp_hands.Hands(min_detection_confidence=0.7, min_tracking_confidence=0.7, m
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+
+        frame_count += 1 
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        time.sleep(max(0, 0.001 - elapsed_time))
 
 cap.release()
 cv2.destroyAllWindows()
